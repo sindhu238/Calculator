@@ -7,7 +7,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 /**
- * Created by venkateswara on 10/01/17.
+ * Created by Sindhu on 10/01/17.
  */
 
 public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActivity> {

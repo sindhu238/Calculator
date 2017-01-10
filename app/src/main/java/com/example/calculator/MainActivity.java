@@ -3,7 +3,6 @@ package com.example.calculator;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -92,9 +91,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /*
-    When a number is clicked it is taken as a input number. When an operator is clicked necessary
-    arithmetical operation is performed in @link Calculator. This function checks for operator
+    When a number is entered it is taken as a input number. When an operator is clicked necessary
+    arithmetical operation is performed in @link Calculator. This function checks specifically for operator
     precedence.
+
+    @throws IllegalArgumentException when invalid operations are done
      */
     @Override
     public void onClick(View v) {
@@ -108,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case DIVIDE:
                 count++;
 
-                // Check if more than one arithmetic operations are to be done in a sequence
+                // Check if more than one arithmetic operations are to be performed in a sequence
                     if (count > 1) {
 
                         //Checks if operator precendence fails
@@ -117,6 +118,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 (operation.equals("-") && text.equals("*")) ||
                                 (operation.equals("-") && text.equals("/"))) {
                             opPrecedence = true;
+                            //Stored into temp variables so that, first higher precedence computation
+                            //is done and later remaining computations can be done on following result
                             tempNum = leftNumber;
                             tempOp = operation;
 
@@ -130,12 +133,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         }
                         // If operator precedence is satisfied, then this checks for multiple
-                        // computations in same sequence
+                        // same precedent computations in a sequence
                         else {
                             if (!rightNumber.equals("")) {
-                                Log.v("left",leftNumber+":"+number+":"+rightNumber);
                                 result = calculator.performOperation(leftNumber,rightNumber,operation);
-                                Log.v("result",result+":");
                                 leftNumber = String.valueOf(result);
                                 rightNumber = "";
                                 opClicked = true;
@@ -146,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
 
-                    //For single arithmetic operations
+                    //For single arithmetic operations like eg.12+5
                     else {
                         leftNumber = number;
                         opClicked = true;
@@ -174,6 +175,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     leftNumber = "";
                     rightNumber = "";
                     count = 0;
+                } catch (IllegalArgumentException e) {
+                    Toast.makeText(this,"Invalid operation",Toast.LENGTH_SHORT).show();
+                    clearData();
                 } catch (Exception e) {
                     Toast.makeText(this,"Invalid operation",Toast.LENGTH_SHORT).show();
                     clearData();
